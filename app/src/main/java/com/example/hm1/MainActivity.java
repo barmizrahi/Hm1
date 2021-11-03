@@ -4,18 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView panel_IMG_bone1;
@@ -32,8 +34,16 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout panel_lanes;
     private final int NUM_OF_LANES =3;
     private  int curntPos = 1;
-
-    //intent
+    private int insertToArrOfRandomCat = 0;
+    private ArrayList<ImageView> arrOfDogs;
+    private ArrayList<LinearLayout> arrOfLayout;
+    private ImageView[][] matOfCats;
+    private randomCat[] arrOfRandomCat;
+    private ImageView[] arrOfBones;
+    private boolean needToGen = true;
+    private Timer timer = new Timer();
+    private int lives=3;
+    private int clock = 10;
     Context context=null;
 
     LinearLayout.LayoutParams linearlayoutParam=null;
@@ -43,62 +53,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ArrayList<ImageView> arrOfDogs = new ArrayList<>(3);
-        ArrayList<LinearLayout> arrOfLayout = new ArrayList(3);
-        panel_main_layout = findViewById(R.id.panel_main_layout);
-        panel_lanes = findViewById(R.id.panel_lanes);
-
+        findView();
         context=this;
-        LinearLayout.LayoutParams rootlayoutParam=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-
+        RelativeLayout.LayoutParams rootlayoutParam=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
         int top=0;
         for(int i=0;i<NUM_OF_LANES;i++)
         {
-            ImageView cat = new ImageView(context);
-            cat.setId(i);
-            cat.setLayoutParams(new LinearLayout.LayoutParams(200, 200)); // value is in pixels
-
-            cat.setImageResource(R.drawable.img_cat1);
-            //android:layout_marginStart="65dp"
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams
+                    (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             ImageView dog = new ImageView(context);
             dog.setId(i);//check this
             dog.setImageResource(R.drawable.img_dog);
-            dog.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // value is in pixels
-            //rootlayoutParam = new LinearLayout.LayoutParams(100, 100);
-            rootlayoutParam.gravity = Gravity.CENTER_HORIZONTAL;;
-            //dog.setGravity(Gravity.CENTER | Gravity.TOP);
-            dog.setLayoutParams(rootlayoutParam);
             if(i!=1){
                 dog.setVisibility(View.INVISIBLE);
             }
             arrOfDogs.add(dog);
-
-            LinearLayout linearLayout1=new LinearLayout(context);
+            LinearLayout linearLayout1 = new LinearLayout(context);
             linearLayout1.setOrientation(LinearLayout.VERTICAL);
             linearLayout1.setId(i);
             linearlayoutParam=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
             linearLayout1.setBackgroundColor(Color.argb(255,i,50*i+100,100+2*i));
             linearlayoutParam.weight= 1;
+            linearLayout1.setGravity(Gravity.CENTER);
             linearLayout1.setLayoutParams(linearlayoutParam);
-            linearLayout1.addView(cat);
-
+            for(int j=0;j<6;j++){
+                ImageView cat = new ImageView(context);
+                cat.setId(i);
+                cat.setLayoutParams(new LinearLayout.LayoutParams(200, 200)); // value is in pixels
+                cat.setImageResource(R.drawable.img_cat1);
+                matOfCats[j][i] = cat;
+                linearLayout1.addView(cat);
+                cat.setVisibility(View.INVISIBLE);
+            }
+            lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             arrOfLayout.add(linearLayout1);
-            arrOfLayout.get(i).addView(dog);
+            arrOfLayout.get(i).addView(dog,lp);
             panel_lanes.addView(linearLayout1);
 
 
         }
-/*
-        ImageView dog = new ImageView(context);
-        dog.setId(0);//check this
-        dog.setImageResource(R.drawable.img_dog);
-        dog.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // value is in pixels
-        arrOfLayout.get(1).addView(dog);
 
- */
         setContentView(panel_main_layout);
         panel_IMG_right = findViewById(R.id.panel_IMG_right);
         panel_IMG_left = findViewById(R.id.panel_IMG_left);
+
         panel_IMG_right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,5 +117,119 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        startTicker();
+        }
+
+    public void gen(){
+        randomCat rc;
+            if (needToGen) {
+                int max = 2 ,min=0;
+                int lane = new Random().nextInt((max - min) + 1) + min;
+                if (insertToArrOfRandomCat == 4) {
+                    insertToArrOfRandomCat = 0;
+                    //arrOfRandomCat[insertToArrOfRandomCat] = new randomCat(lane, 0);
+                    arrOfRandomCat[insertToArrOfRandomCat].setCol(0);
+                    arrOfRandomCat[insertToArrOfRandomCat].setLine(lane);
+                    rc = arrOfRandomCat[insertToArrOfRandomCat];
+
+
+                }else{
+               // arrOfRandomCat[insertToArrOfRandomCat] = new randomCat(lane, 0);
+                    arrOfRandomCat[insertToArrOfRandomCat].setCol(0);
+                    arrOfRandomCat[insertToArrOfRandomCat].setLine(lane);
+                     rc = arrOfRandomCat[insertToArrOfRandomCat];
+                }
+                matOfCats[rc.getCol()][rc.getLine()].setVisibility(View.VISIBLE);
+                insertToArrOfRandomCat++;
+                needToGen = false;
+            } else {
+                needToGen = true;
+            }
+            for (int i = 0; i < 4; i++) {
+
+
+                int num=0;
+                    if (arrOfRandomCat[i] != null) {
+                        if(i != insertToArrOfRandomCat-1||needToGen) {
+                            if(arrOfRandomCat[i].getCol()==6){
+                                num = arrOfRandomCat[i].getCol()-1;
+                            }
+                            else{
+                                num = arrOfRandomCat[i].getCol();
+                            }
+                            if (arrOfRandomCat[i].getLine() == curntPos){
+                                if(arrOfRandomCat[i].getCol()+1 == 7){
+                                   // if(matOfCats[arrOfRandomCat[i].getCol()-1][arrOfRandomCat[i].getLane()].getVisibility() == View.VISIBLE) {
+                                        lives--;
+                                        updateLivesViews();
+                                  //  }
+                                 }
+                             }
+
+
+                            matOfCats[num][arrOfRandomCat[i].getLine()].setVisibility(View.INVISIBLE);
+                            arrOfRandomCat[i].addCol();
+
+                        }
+                        //if(arrOfRandomCat[i].getCol()+1)
+                        if (arrOfRandomCat[i].getCol() <= 6) {
+                            if(arrOfRandomCat[i].getCol()!=6) {
+                                Log.d("my", "boom" + arrOfRandomCat[i].getCol());
+                                matOfCats[arrOfRandomCat[i].getCol()][arrOfRandomCat[i].getLine()].setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+               // }
+            }
+
     }
+
+    private void startTicker() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gen();
+                    }
+                });
+            }
+        }, 0, 1000);
+    }
+
+
+    private void findView(){
+        arrOfDogs = new ArrayList<>(3);
+        arrOfLayout = new ArrayList(3);
+        arrOfRandomCat = new randomCat[]{
+                new randomCat(0,0),
+                new randomCat(0,0),
+                new randomCat(0,0),
+                new randomCat(0,0)
+        };
+        matOfCats = new ImageView[7][3];
+        panel_main_layout = findViewById(R.id.panel_main_layout);
+        panel_lanes = findViewById(R.id.panel_lanes);
+        arrOfBones = new ImageView[] {
+                findViewById(R.id.panel_IMG_bone1),
+                findViewById(R.id.panel_IMG_bone2),
+                findViewById(R.id.panel_IMG_bone3)
+        };
+    }
+
+    private void updateLivesViews() {
+        if(lives==0){
+            arrOfBones[0].setVisibility(View.VISIBLE);
+            arrOfBones[1].setVisibility(View.VISIBLE);
+            arrOfBones[2].setVisibility(View.VISIBLE);
+            lives=3;
+            Toast.makeText(getApplicationContext(),"Fail, Try Again",Toast.LENGTH_SHORT).show();
+        }
+        else
+          arrOfBones[lives].setVisibility(View.INVISIBLE);
+
+    }
+
 }
