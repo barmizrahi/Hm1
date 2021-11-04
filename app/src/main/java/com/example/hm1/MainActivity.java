@@ -85,13 +85,9 @@ public class MainActivity extends AppCompatActivity {
             arrOfLayout.add(linearLayout1);
             arrOfLayout.get(i).addView(dog, lp);
             panel_lanes.addView(linearLayout1);
-
-
         }
 
         setContentView(panel_main_layout);
-        panel_IMG_right = findViewById(R.id.panel_IMG_right);
-        panel_IMG_left = findViewById(R.id.panel_IMG_left);
 
         panel_IMG_right.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,6 +177,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void findView() {
         arrOfDogs = new ArrayList<>(NUM_OF_LANES);
+        panel_IMG_right = findViewById(R.id.panel_IMG_right);
+        panel_IMG_left = findViewById(R.id.panel_IMG_left);
         arrOfLayout = new ArrayList(NUM_OF_LANES);
         arrOfRandomCat = new randomCat[]{
                 new randomCat(0, 0),
