@@ -22,13 +22,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageView panel_IMG_bone1;
-    private ImageView panel_IMG_bone2;
-    private ImageView panel_IMG_bone3;
-    private ImageView panel_IMG_cat1;
-    private ImageView panel_IMG_cat2;
-    private ImageView panel_IMG_cat3;
-    private ImageView panel_IMG_dog;
     private ImageView panel_IMG_left;
     private ImageView panel_IMG_right;
     private TextView panel_LBL_score;
@@ -41,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private randomAlien[] arrOfRandomAlien;
     private randomAlien[] arrOfRandomBonus;
     private ImageView[] arrOfLife;
-    private boolean needToGen = true , needToSpeedUp = true;
+    private boolean needToGen = true, needToSpeedUp = true;
     private Timer timer = new Timer();
-    private int lives = 3 , score = 0 ,genBonus,bonus,curntPos=1,insertToArrOfRandomAlien=0,insertToArrOfRandomBonus = 0 , time =1000;
+    private int lives = 3, score = 0, curPos = 1, insertToArrOfRandomAlien = 0, insertToArrOfRandomBonus = 0, time = 1000, genBonus;
     private final int NUM_OF_LANES = 3;
     private final int MAX_TO_ARRIVE = 6;
     private randomAlien ra;
@@ -57,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findView();
         context = this;
-        RelativeLayout.LayoutParams rootlayoutParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        //RelativeLayout.LayoutParams rootlayoutParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         for (int i = 0; i < NUM_OF_LANES; i++) {
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams
                     (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -106,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (arrOfSpaceShip.get(2).getVisibility() != View.VISIBLE) {
-                    arrOfSpaceShip.get(curntPos + 1).setVisibility(View.VISIBLE);
-                    arrOfSpaceShip.get(curntPos).setVisibility(View.INVISIBLE);
-                    curntPos += 1;
+                    arrOfSpaceShip.get(curPos + 1).setVisibility(View.VISIBLE);
+                    arrOfSpaceShip.get(curPos).setVisibility(View.INVISIBLE);
+                    curPos += 1;
                 }
             }
         });
@@ -116,9 +109,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (arrOfSpaceShip.get(0).getVisibility() != View.VISIBLE) {
-                    arrOfSpaceShip.get(curntPos - 1).setVisibility(View.VISIBLE);
-                    arrOfSpaceShip.get(curntPos).setVisibility(View.INVISIBLE);
-                    curntPos -= 1;
+                    arrOfSpaceShip.get(curPos - 1).setVisibility(View.VISIBLE);
+                    arrOfSpaceShip.get(curPos).setVisibility(View.INVISIBLE);
+                    curPos -= 1;
                 }
             }
         });
@@ -143,9 +136,9 @@ public class MainActivity extends AppCompatActivity {
         if (needToGen) {
             needToGen = false;
             int max = 2, min = 0, lane = new Random().nextInt((max - min) + 1) + min;
-            int max1 = 1 , min1 = 0;
+            int max1 = 1, min1 = 0;
             genBonus = new Random().nextInt((max1 - min1) + 1) + min1;
-            if(genBonus==0) { //then gen an alien
+            if (genBonus == 0) { //then gen an alien
                 if (insertToArrOfRandomAlien == NUM_OF_LANES + 1) {
                     insertToArrOfRandomAlien = 0;
 
@@ -154,8 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 ra = arrOfRandomAlien[insertToArrOfRandomAlien];
                 matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
                 insertToArrOfRandomAlien++;
-            }
-            else{ // need to gen a bonus
+            } else { // need to gen a bonus
                 if (insertToArrOfRandomBonus == NUM_OF_LANES + 1) {
                     insertToArrOfRandomBonus = 0;
                 }
@@ -173,15 +165,15 @@ public class MainActivity extends AppCompatActivity {
     private void moveObj() {
         for (int i = 0; i < NUM_OF_LANES + 1; i++) {
             int num = 0;
-            moveAlienDown(i,num);
-            moveStarDown(i,num);
+            moveAlienDown(i, num);
+            moveStarDown(i, num);
         }
 
     }
 
     private void moveStarDown(int i, int num) {
         if (arrOfRandomBonus[i] != null) {
-            if (i != insertToArrOfRandomBonus - 1 || needToGen || genBonus==0) {
+            if (i != insertToArrOfRandomBonus - 1 || needToGen || genBonus == 0) {
                 if (arrOfRandomBonus[i].getLine() >= MAX_TO_ARRIVE) {
                     num = 5;
                 } else {
@@ -190,10 +182,10 @@ public class MainActivity extends AppCompatActivity {
                 //Log.i("mys" , "bonus "+num+" "+i);
                 matOfBonus[num][arrOfRandomBonus[i].getRow()].setVisibility(View.INVISIBLE);
                 arrOfRandomBonus[i].addLine();
-                if (arrOfRandomBonus[i].getRow() == curntPos && arrOfRandomBonus[i].getLine() == MAX_TO_ARRIVE) {
+                if (arrOfRandomBonus[i].getRow() == curPos && arrOfRandomBonus[i].getLine() == MAX_TO_ARRIVE) {
                     score = score + 100;
                     panel_LBL_score.setText("" + score);
-                    if((score+1000)%1000 == 0 && needToSpeedUp){
+                    if ((score + 1000) % 1000 == 0 && needToSpeedUp) {
                         time = time - 100;
                         needToSpeedUp = false;
                     }
@@ -203,12 +195,20 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("my", "bonus index: " + i + " ,line: " + arrOfRandomBonus[i].getLine() + " ,row " + arrOfRandomBonus[i].getRow());
                 matOfBonus[arrOfRandomBonus[i].getLine()][arrOfRandomBonus[i].getRow()].setVisibility(View.VISIBLE);
             }
+            /*enter to this if but he doent whow me the object
+            if(arrOfRandomBonus[i].getLine()==5 && i==0){
+                 Log.i("my","here");
+                matOfBonus[5][arrOfRandomBonus[i].getRow()].setVisibility(View.VISIBLE);
+             }
+              */
+
         }
     }
 
+
     private void moveAlienDown(int i, int num) {
         if (arrOfRandomAlien[i] != null) {
-            if (i != insertToArrOfRandomAlien - 1 || needToGen || genBonus==1) {
+            if (i != insertToArrOfRandomAlien - 1 || needToGen || genBonus == 1) {
                 if (arrOfRandomAlien[i].getLine() >= MAX_TO_ARRIVE) {
                     num = 5;
                 } else {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 matOfAlien[num][arrOfRandomAlien[i].getRow()].setVisibility(View.INVISIBLE);
                 arrOfRandomAlien[i].addLine();
-                if (arrOfRandomAlien[i].getRow() == curntPos && arrOfRandomAlien[i].getLine() == MAX_TO_ARRIVE) {
+                if (arrOfRandomAlien[i].getRow() == curPos && arrOfRandomAlien[i].getLine() == MAX_TO_ARRIVE) {
                     lives--;
                     updateLivesViews();
                 }
@@ -225,10 +225,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("my", "alien index: " + i + " ,line: " + arrOfRandomAlien[i].getLine() + " ,row " + arrOfRandomAlien[i].getRow());
                 matOfAlien[arrOfRandomAlien[i].getLine()][arrOfRandomAlien[i].getRow()].setVisibility(View.VISIBLE);
             }
-            // if(arrOfRandomCat[i].getLine()==5 && i==0){
-            //   Log.i("my","here");
-            //   matOfCats[5][arrOfRandomCat[i].getRow()].setVisibility(View.VISIBLE);
-            // }
+            /*enter to this if but he doent whow me the object
+             if(arrOfRandomAlien[i].getLine()==5 && i==0){
+               Log.i("my","here");
+               matOfAlien[5][arrOfRandomAlien[i].getRow()].setVisibility(View.VISIBLE);
+             }
+             */
         }
     }
 
@@ -239,8 +241,8 @@ public class MainActivity extends AppCompatActivity {
         panel_IMG_right = findViewById(R.id.panel_IMG_right);
         panel_IMG_left = findViewById(R.id.panel_IMG_left);
         arrOfLayout = new ArrayList(NUM_OF_LANES);
-        arrOfRandomAlien = new randomAlien[NUM_OF_LANES+1];
-        arrOfRandomBonus = new randomAlien[NUM_OF_LANES+1];
+        arrOfRandomAlien = new randomAlien[NUM_OF_LANES + 1];
+        arrOfRandomBonus = new randomAlien[NUM_OF_LANES + 1];
         matOfAlien = new ImageView[MAX_TO_ARRIVE][NUM_OF_LANES];
         matOfBonus = new ImageView[MAX_TO_ARRIVE][NUM_OF_LANES];
         panel_main_layout = findViewById(R.id.panel_main_layout);
@@ -273,13 +275,16 @@ public class MainActivity extends AppCompatActivity {
             v.vibrate(500);
         }
     }
+
     private void stopTicker() {
         timer.cancel();
     }
+
     protected void onStart() {
         super.onStart();
         startTicker();
     }
+
     protected void onStop() {
         super.onStop();
         stopTicker();
