@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private randomAlien[] arrOfRandomAlien;
     private randomAlien[] arrOfRandomBonus;
     private ImageView[] arrOfLife;
-    private boolean needToGen = true;
+    private boolean needToGen = true , needToSpeedUp = true;
     private Timer timer = new Timer();
-    private int lives = 3 , score = 0 ,genBonus,bonus,curntPos=1,insertToArrOfRandomAlien=0,insertToArrOfRandomBonus = 0;
+    private int lives = 3 , score = 0 ,genBonus,bonus,curntPos=1,insertToArrOfRandomAlien=0,insertToArrOfRandomBonus = 0 , time =1000;
     private final int NUM_OF_LANES = 3;
     private final int MAX_TO_ARRIVE = 6;
     private randomAlien ra;
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 alien.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // value is in pixels
                 alien.setImageResource(R.drawable.img_alien);
                 matOfAlien[j][i] = alien;
-                linearLayout1.addView(alien);
+
                 alien.setVisibility(View.INVISIBLE);
 
                 ImageView bonus = new ImageView(context);
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 bonus.setImageResource(R.drawable.img_star);
                 matOfBonus[j][i] = bonus;
                 linearLayout1.addView(bonus);
+                linearLayout1.addView(alien);
                 bonus.setVisibility(View.INVISIBLE);
             }
             lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -135,20 +136,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, 0, 1000);
+        }, 0, time);
     }
 
     private void gen() {
         if (needToGen) {
             needToGen = false;
-            int max = 2, min = 0, lane = 0;//new Random().nextInt((max - min) + 1) + min;
+            int max = 2, min = 0, lane = new Random().nextInt((max - min) + 1) + min;
             int max1 = 1 , min1 = 0;
             genBonus = new Random().nextInt((max1 - min1) + 1) + min1;
             if(genBonus==0) { //then gen an alien
                 if (insertToArrOfRandomAlien == NUM_OF_LANES + 1) {
                     insertToArrOfRandomAlien = 0;
-                  //  arrOfRandomAlien[insertToArrOfRandomAlien].setRow(lane);
-                 //   arrOfRandomAlien[insertToArrOfRandomAlien].setLine(0);
+
                 }
                 arrOfRandomAlien[insertToArrOfRandomAlien] = new randomAlien(0, lane);
                 ra = arrOfRandomAlien[insertToArrOfRandomAlien];
@@ -158,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
             else{ // need to gen a bonus
                 if (insertToArrOfRandomBonus == NUM_OF_LANES + 1) {
                     insertToArrOfRandomBonus = 0;
-                    //  arrOfRandomAlien[insertToArrOfRandomAlien].setRow(lane);
-                    //   arrOfRandomAlien[insertToArrOfRandomAlien].setLine(0);
                 }
                 arrOfRandomBonus[insertToArrOfRandomBonus] = new randomAlien(0, lane);
                 ra = arrOfRandomBonus[insertToArrOfRandomBonus];
@@ -169,56 +167,69 @@ public class MainActivity extends AppCompatActivity {
         } else {
             needToGen = true;
         }
-        //Log.i("myt",""+needToGen + " genbonus "+genBonus + " insertToArrOfRandomBonus " + insertToArrOfRandomBonus+" insertToArrOfRandomAlien " +insertToArrOfRandomAlien);
-           for (int i = 0; i < NUM_OF_LANES + 1; i++) {
-            int num = 0;
-            if (arrOfRandomAlien[i] != null) {
-                if (i != insertToArrOfRandomAlien - 1 || needToGen || genBonus==1) {
-                    if (arrOfRandomAlien[i].getLine() >= MAX_TO_ARRIVE) {
-                        num = 5;
-                    } else {
-                        num = arrOfRandomAlien[i].getLine();
-                    }
-                    //Log.i("mys" , "alien "+num+ " "+i);
-                    matOfAlien[num][arrOfRandomAlien[i].getRow()].setVisibility(View.INVISIBLE);
-                    arrOfRandomAlien[i].addLine();
-                    if (arrOfRandomAlien[i].getRow() == curntPos && arrOfRandomAlien[i].getLine() == MAX_TO_ARRIVE) {
-                        lives--;
-                        updateLivesViews();
-                    }
-                }
-                if (arrOfRandomAlien[i].getLine() < MAX_TO_ARRIVE) {
-                    Log.i("my", "alien index: " + i + " ,line: " + arrOfRandomAlien[i].getLine() + " ,row " + arrOfRandomAlien[i].getRow());
-                    matOfAlien[arrOfRandomAlien[i].getLine()][arrOfRandomAlien[i].getRow()].setVisibility(View.VISIBLE);
-                }
-                // if(arrOfRandomCat[i].getLine()==5 && i==0){
-                //   Log.i("my","here");
-                //   matOfCats[5][arrOfRandomCat[i].getRow()].setVisibility(View.VISIBLE);
-                // }
-            }
-                if (arrOfRandomBonus[i] != null) {
-                    if (i != insertToArrOfRandomBonus - 1 || needToGen || genBonus==0) {
-                        if (arrOfRandomBonus[i].getLine() >= MAX_TO_ARRIVE) {
-                            num = 5;
-                        } else {
-                            num = arrOfRandomBonus[i].getLine();
-                        }
-                        //Log.i("mys" , "bonus "+num+" "+i);
-                        matOfBonus[num][arrOfRandomBonus[i].getRow()].setVisibility(View.INVISIBLE);
-                        arrOfRandomBonus[i].addLine();
-                        if (arrOfRandomBonus[i].getRow() == curntPos && arrOfRandomBonus[i].getLine() == MAX_TO_ARRIVE) {
-                            score = score + 100;
-                            panel_LBL_score.setText("" + score);
-                        }
-                    }
-                    if (arrOfRandomBonus[i].getLine() < MAX_TO_ARRIVE) {
-                        Log.i("my", "bonus index: " + i + " ,line: " + arrOfRandomBonus[i].getLine() + " ,row " + arrOfRandomBonus[i].getRow());
-                        matOfBonus[arrOfRandomBonus[i].getLine()][arrOfRandomBonus[i].getRow()].setVisibility(View.VISIBLE);
-                    }
-                }
+        moveObj();
+    }
 
+    private void moveObj() {
+        for (int i = 0; i < NUM_OF_LANES + 1; i++) {
+            int num = 0;
+            moveAlienDown(i,num);
+            moveStarDown(i,num);
         }
 
+    }
+
+    private void moveStarDown(int i, int num) {
+        if (arrOfRandomBonus[i] != null) {
+            if (i != insertToArrOfRandomBonus - 1 || needToGen || genBonus==0) {
+                if (arrOfRandomBonus[i].getLine() >= MAX_TO_ARRIVE) {
+                    num = 5;
+                } else {
+                    num = arrOfRandomBonus[i].getLine();
+                }
+                //Log.i("mys" , "bonus "+num+" "+i);
+                matOfBonus[num][arrOfRandomBonus[i].getRow()].setVisibility(View.INVISIBLE);
+                arrOfRandomBonus[i].addLine();
+                if (arrOfRandomBonus[i].getRow() == curntPos && arrOfRandomBonus[i].getLine() == MAX_TO_ARRIVE) {
+                    score = score + 100;
+                    panel_LBL_score.setText("" + score);
+                    if((score+1000)%1000 == 0 && needToSpeedUp){
+                        time = time - 100;
+                        needToSpeedUp = false;
+                    }
+                }
+            }
+            if (arrOfRandomBonus[i].getLine() < MAX_TO_ARRIVE) {
+                Log.i("my", "bonus index: " + i + " ,line: " + arrOfRandomBonus[i].getLine() + " ,row " + arrOfRandomBonus[i].getRow());
+                matOfBonus[arrOfRandomBonus[i].getLine()][arrOfRandomBonus[i].getRow()].setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void moveAlienDown(int i, int num) {
+        if (arrOfRandomAlien[i] != null) {
+            if (i != insertToArrOfRandomAlien - 1 || needToGen || genBonus==1) {
+                if (arrOfRandomAlien[i].getLine() >= MAX_TO_ARRIVE) {
+                    num = 5;
+                } else {
+                    num = arrOfRandomAlien[i].getLine();
+                }
+                matOfAlien[num][arrOfRandomAlien[i].getRow()].setVisibility(View.INVISIBLE);
+                arrOfRandomAlien[i].addLine();
+                if (arrOfRandomAlien[i].getRow() == curntPos && arrOfRandomAlien[i].getLine() == MAX_TO_ARRIVE) {
+                    lives--;
+                    updateLivesViews();
+                }
+            }
+            if (arrOfRandomAlien[i].getLine() < MAX_TO_ARRIVE) {
+                Log.i("my", "alien index: " + i + " ,line: " + arrOfRandomAlien[i].getLine() + " ,row " + arrOfRandomAlien[i].getRow());
+                matOfAlien[arrOfRandomAlien[i].getLine()][arrOfRandomAlien[i].getRow()].setVisibility(View.VISIBLE);
+            }
+            // if(arrOfRandomCat[i].getLine()==5 && i==0){
+            //   Log.i("my","here");
+            //   matOfCats[5][arrOfRandomCat[i].getRow()].setVisibility(View.VISIBLE);
+            // }
+        }
     }
 
 

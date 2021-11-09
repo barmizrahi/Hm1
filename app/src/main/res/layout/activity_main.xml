@@ -12,7 +12,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_weight="3.3"
         android:background="@color/black">
 
         <ImageView
@@ -47,10 +47,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="9dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:text="0000"
+            android:text="000"
             android:textColor="@color/white"
             android:textSize="50sp" />
 
@@ -59,14 +59,14 @@
     <LinearLayout
         android:id="@+id/panel_lanes"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="715dp"
+        android:layout_weight="0.8"
         android:background="@drawable/background_space"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="695dp"
         android:layout_weight="3"
         android:background="@color/black"
         android:orientation="horizontal">
@@ -75,18 +75,18 @@
         <ImageView
             android:id="@+id/panel_IMG_left"
             android:layout_width="100dp"
-            android:layout_height="85dp"
+            android:layout_height="70dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:src="@drawable/img_left"></ImageView>
-
 
 
         <ImageView
             android:id="@+id/panel_IMG_right"
             android:layout_width="86dp"
-            android:layout_height="99dp"
+            android:layout_height="70dp"
             android:layout_marginStart="220dp"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/panel_IMG_left"
             android:src="@drawable/img_right"></ImageView>
 
