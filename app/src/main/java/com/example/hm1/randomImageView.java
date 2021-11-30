@@ -1,12 +1,14 @@
 package com.example.hm1;
 
-public class randomAlien {
-    int line;
-    int row;
+public class randomImageView {
+    private int line;
+    private int row;
+    private String source;
 
-    public randomAlien(int line , int row){
+    public randomImageView(int line , int row, String source){
         this.line = line;
         this.row = row;
+        this.source = source;
     }
      public void addLine(){
         line++;
@@ -18,6 +20,10 @@ public class randomAlien {
 
     public int getRow() {
         return row;
+    }
+
+    public String getSource(){
+        return this.source;
     }
 
     public void setRow(int row){
