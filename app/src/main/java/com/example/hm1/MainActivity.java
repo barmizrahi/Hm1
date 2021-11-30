@@ -7,25 +7,22 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-
+    private RelativeLayout panel_Life_Score_layout;
+    private FrameLayout frameStart;
     private ImageView panel_IMG_left;
     private ImageView panel_IMG_right;
     private SensorManager sensorManager;
@@ -48,46 +45,27 @@ public class MainActivity extends AppCompatActivity {
     private float curX;
     private float curT;
     private float cutZ;
-   // Game game;
-
-    private boolean firstTimeEnter = true;
+    Game game;
     private Context context = null;
+    private boolean firstTimeEnter = true;
     private LinearLayout.LayoutParams linearlayoutParam = null;
+    private Fragment_start fragment_start;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findView();
         context = this;
-       // Game game = new Game(context);
-        insertImageView();
-        setContentView(panel_main_layout);
+        game = new Game(context);
+        fragment_start = new Fragment_start();
+        fragment_start.setActivity(this);
+        fragment_start.setCallBackStart(callBack_start);
+        getSupportFragmentManager().beginTransaction().add(R.id.frameStart, fragment_start).commit();
 
-        panel_IMG_right.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (arrOfSpaceShip.get(4).getVisibility() != View.VISIBLE) {
-                    arrOfSpaceShip.get(curPos + 1).setVisibility(View.VISIBLE);
-                    arrOfSpaceShip.get(curPos).setVisibility(View.INVISIBLE);
-                    curPos += 1;
-                }
-            }
-        });
-        panel_IMG_left.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (arrOfSpaceShip.get(0).getVisibility() != View.VISIBLE) {
-                    arrOfSpaceShip.get(curPos - 1).setVisibility(View.VISIBLE);
-                    arrOfSpaceShip.get(curPos).setVisibility(View.INVISIBLE);
-                    curPos -= 1;
-                }
-            }
-        });
     }
 
-    private void insertImageView() {
+  /*  private void insertImageView() {
         for (int i = 0; i < NUM_OF_LANES; i++) {
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams
                     (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -124,18 +102,29 @@ public class MainActivity extends AppCompatActivity {
             linearLayout1.addView(imageView);
         }
     }
-
-    public void sensorOrPress(int choose){
+      public void sensorOrPress(int choose){
         this.choose = choose;
         if(choose==0) {//press
-            panel_IMG_right.setVisibility(View.VISIBLE);
-            panel_IMG_left.setVisibility(View.VISIBLE);
-            panel_below_layout.setVisibility(View.VISIBLE);
+            game.getPanel_below_layout().setVisibility(View.VISIBLE);
+            game.getPanel_IMG_right().setVisibility(View.VISIBLE);
+            game.getPanel_IMG_left().setVisibility(View.VISIBLE);
         }
         if(choose==1){//sensor
             initSensor();
         }
     }
+*/
+  public void sensorOrPress(){
+      if(game.getChoose()==0) {//press
+          game.getPanel_below_layout().setVisibility(View.VISIBLE);
+          game.getPanel_IMG_right().setVisibility(View.VISIBLE);
+          game.getPanel_IMG_left().setVisibility(View.VISIBLE);
+      }
+      if(game.getChoose()==1){//sensor
+          initSensor();
+      }
+  }
+
     private void startTicker() {
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -145,13 +134,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         //gen();
-                        gen();
+                        game.gen();
                     }
                 });
             }
         }, 0, time);
     }
-
+/*
     private void gen(){
         if (needToGen) {
             needToGen = false;
@@ -233,26 +222,36 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+*/
 
     private void findView() {
+        frameStart = findViewById(R.id.frameStart);
+        panel_Life_Score_layout =findViewById(R.id.panel_Life_Score_layout);
         panel_below_layout = findViewById(R.id.panel_below_layout);
-        arrOfSpaceShip = new ArrayList<>(NUM_OF_LANES);
+        game.setPanel_below_layout(panel_below_layout);
         panel_LBL_score = findViewById(R.id.panel_LBL_score);
+        game.setPanel_LBL_score(panel_LBL_score);
         panel_IMG_right = findViewById(R.id.panel_IMG_right);
+        game.setPanel_IMG_right(panel_IMG_right);
         panel_IMG_left = findViewById(R.id.panel_IMG_left);
+        game.setPanel_IMG_left(panel_IMG_left);
+        panel_main_layout = findViewById(R.id.panel_main_layout);
+        game.setPanel_main_layout(panel_main_layout);
+        panel_lanes = findViewById(R.id.panel_lanes);
+        game.setPanel_lanes(panel_lanes);
+        arrOfSpaceShip = new ArrayList<>(NUM_OF_LANES);
         arrOfLayout = new ArrayList(NUM_OF_LANES);
         arrOfImageView = new randomImageView[NUM_OF_LANES + 1];
         matOfAlien = new ImageView[MAX_TO_ARRIVE][NUM_OF_LANES];
-        panel_main_layout = findViewById(R.id.panel_main_layout);
-        panel_lanes = findViewById(R.id.panel_lanes);
         arrOfLife = new ImageView[]{
                 findViewById(R.id.panel_IMG_life1),
                 findViewById(R.id.panel_IMG_life2),
                 findViewById(R.id.panel_IMG_life3)
         };
-    }
+        game.setArrOfLife(arrOfLife);
 
+    }
+/*
     private void updateLivesViews() {
         if (lives == 0) {
             //then exit and save the score not recaycle
@@ -276,20 +275,20 @@ public class MainActivity extends AppCompatActivity {
             v.vibrate(500);
         }
     }
-
-    private void stopTicker() {
-        timer.cancel();
-    }
+   */
     protected void onStop() {
         super.onStop();
-        stopTicker();
+        game.stopTicker();
     }
 
     protected void onStart() {
         super.onStart();
-        sensorOrPress(1);
-        firstTimeEnter = true;
+        /*
+        sensorOrPress();
+        game.setFirstTimeEnter(true);
         startTicker();
+        */
+
 
     }
 
@@ -298,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(choose==1) {
+        if(game.getChoose()==1) {
             sensorManager.registerListener(accSensorEventListener, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
@@ -306,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(choose==1) {
+        if(game.getChoose()==1) {
             sensorManager.unregisterListener(accSensorEventListener);
         }
     }
@@ -318,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
     private void initSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        onResume();
     }
 
     private SensorEventListener accSensorEventListener = new SensorEventListener() {
@@ -329,56 +329,139 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
-            if(firstTimeEnter){//need to set the curr values
-                curX = event.values[0];
-                curT = event.values[1];
-                cutZ = event.values[2];
-                firstTimeEnter = false;
+            if(game.getFirstTimeEnter()){//need to set the curr values for speed
+                game.setCurX(event.values[0]);
+                game.setCurY(event.values[1]);
+                game.setCurZ(event.values[2]);
+                game.setFirstTimeEnter(false);
             }
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
-            Log.i("ab" ,""+ x);
+            Log.i("myTag" ,""+ x);
             if(x>7&&x<=9){//the 0 posion is on
-                arrOfSpaceShip.get(0).setVisibility(View.VISIBLE);
-                arrOfSpaceShip.get(3).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(4).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(1).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(2).setVisibility(View.INVISIBLE);
-                curPos=0;
+                moveTheSpaceShip(0);
+                /*
+                game.getArrOfSpaceShip().get(0).setVisibility(View.VISIBLE);
+                game.getArrOfSpaceShip().get(3).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(4).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(1).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(2).setVisibility(View.INVISIBLE);
+                game.setCurPos(0);
+                */
             }
             if(x>=1&&x<=4){//the 1 posion is on
-                arrOfSpaceShip.get(1).setVisibility(View.VISIBLE);
-                arrOfSpaceShip.get(2).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(4).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(3).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(0).setVisibility(View.INVISIBLE);
-                curPos=1;
+                moveTheSpaceShip(1);
+                /*
+                game.getArrOfSpaceShip().get(1).setVisibility(View.VISIBLE);
+                game.getArrOfSpaceShip().get(2).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(4).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(3).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(0).setVisibility(View.INVISIBLE);
+                game.setCurPos(1);
+
+                 */
             }
             if(x>=-1&&x<=1){//the middle 2 posion is on
-                arrOfSpaceShip.get(2).setVisibility(View.VISIBLE);
-                arrOfSpaceShip.get(3).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(4).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(1).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(0).setVisibility(View.INVISIBLE);
-                curPos=2;
+                moveTheSpaceShip(2);
+                /*
+                game.getArrOfSpaceShip().get(2).setVisibility(View.VISIBLE);
+                game.getArrOfSpaceShip().get(3).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(4).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(1).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(0).setVisibility(View.INVISIBLE);
+                game.setCurPos(2);
+
+                 */
             }
             if(x<=-1&&x>=-4){//the  3 posion is on
-                arrOfSpaceShip.get(3).setVisibility(View.VISIBLE);
-                arrOfSpaceShip.get(0).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(4).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(1).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(2).setVisibility(View.INVISIBLE);
-                curPos=3;
+                moveTheSpaceShip(3);
+                /*
+                game.getArrOfSpaceShip().get(3).setVisibility(View.VISIBLE);
+                game.getArrOfSpaceShip().get(0).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(4).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(1).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(2).setVisibility(View.INVISIBLE);
+                game.setCurPos(3);
+                */
+
             }
             if(x<-7&&x>=-9){//the left 4 posion is on
-                arrOfSpaceShip.get(4).setVisibility(View.VISIBLE);
-                arrOfSpaceShip.get(3).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(1).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(0).setVisibility(View.INVISIBLE);
-                arrOfSpaceShip.get(2).setVisibility(View.INVISIBLE);
-                curPos=4;
+                moveTheSpaceShip(4);
+                /*
+                game.getArrOfSpaceShip().get(4).setVisibility(View.VISIBLE);
+                game.getArrOfSpaceShip().get(3).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(1).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(0).setVisibility(View.INVISIBLE);
+                game.getArrOfSpaceShip().get(2).setVisibility(View.INVISIBLE);
+                game.setCurPos(4);
+
+                 */
             }
         }
     };
+
+    private void moveTheSpaceShip(int pos) {
+        for(int i=0;i<NUM_OF_LANES;i++){
+            if(i!=pos){
+                game.getArrOfSpaceShip().get(i).setVisibility(View.INVISIBLE);
+            }
+            else
+                game.getArrOfSpaceShip().get(i).setVisibility(View.VISIBLE);
+        }
+        game.setCurPos(pos);
+    }
+
+    CallBack_Start callBack_start = new CallBack_Start() {
+        @Override
+        public void gameWithButton() {
+            game.setChoose(0);
+            startTheGame();
+        }
+
+        @Override
+        public void gameWithSensor() {
+            game.setChoose(1);
+            startTheGame();
+        }
+
+        @Override
+        public void showTopTen() {
+
+        }
+    };
+
+    private void startTheGame() {
+
+
+        findView();
+        game.insertImageView();
+        setContentView(panel_main_layout);
+        game.getPanel_IMG_right().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (game.getArrOfSpaceShip().get(4).getVisibility() != View.VISIBLE) {
+                    game.getArrOfSpaceShip().get(curPos + 1).setVisibility(View.VISIBLE);
+                    game.getArrOfSpaceShip().get(curPos).setVisibility(View.INVISIBLE);
+                    curPos += 1;
+                }
+            }
+        });
+        game.getPanel_IMG_left().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (game.getArrOfSpaceShip().get(0).getVisibility() != View.VISIBLE) {
+                    game.getArrOfSpaceShip().get(curPos - 1).setVisibility(View.VISIBLE);
+                    game.getArrOfSpaceShip().get(curPos).setVisibility(View.INVISIBLE);
+                    curPos -= 1;
+                }
+            }
+        });
+        frameStart.setVisibility(View.GONE);//gone the start manu and bring the game
+        panel_Life_Score_layout.setVisibility(View.VISIBLE);
+        panel_lanes.setVisibility(View.VISIBLE);
+        sensorOrPress();
+        game.setFirstTimeEnter(true);//for speed
+        startTicker();
+    }
 }

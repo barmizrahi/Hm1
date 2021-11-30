@@ -1,0 +1,477 @@
+package com.example.hm1;
+
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Timer;
+
+public class Game {
+    private Context context;
+    private ImageView panel_IMG_left, panel_IMG_right;
+    private SensorManager sensorManager;
+    private Sensor accSensor;
+    private TextView panel_LBL_score;
+    private LinearLayout.LayoutParams linearlayoutParam = null;
+    private LinearLayout panel_main_layout, panel_lanes, panel_below_layout;
+    private ArrayList<ImageView> arrOfSpaceShip;
+    private ArrayList<LinearLayout> arrOfLayout;
+    private ImageView[][] matOfAlien;
+    private randomImageView[] arrOfImageView;
+    private randomImageView ra;
+    private ImageView[] arrOfLife;
+    private Timer timer = new Timer();
+    private boolean needToGen = true, needToSpeedUp = true, firstTimeEnter = true;
+    private int lives = 3, score = 0, curPos = 2, insertToArrOfImageView = 0, time = 1000, genBonus, choose;
+    private final int NUM_OF_LANES = 5;
+    private final int MAX_TO_ARRIVE = 6;
+    private float curX, curY, curZ;
+
+
+    public Game(Context context) {
+        this.context = context;
+        arrOfSpaceShip = new ArrayList<>(NUM_OF_LANES);
+        arrOfLayout = new ArrayList(NUM_OF_LANES);
+        arrOfImageView = new randomImageView[NUM_OF_LANES + 1];
+        matOfAlien = new ImageView[MAX_TO_ARRIVE][NUM_OF_LANES];
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public Game setContext(Context context) {
+        this.context = context;
+        return this;
+    }
+
+    public ImageView getPanel_IMG_left() {
+        return panel_IMG_left;
+    }
+
+    public Game setPanel_IMG_left(ImageView panel_IMG_left) {
+        this.panel_IMG_left = panel_IMG_left;
+        return this;
+    }
+
+    public ImageView getPanel_IMG_right() {
+        return panel_IMG_right;
+    }
+
+    public Game setPanel_IMG_right(ImageView panel_IMG_right) {
+        this.panel_IMG_right = panel_IMG_right;
+        return this;
+    }
+
+    public SensorManager getSensorManager() {
+        return sensorManager;
+    }
+
+    public Game setSensorManager(SensorManager sensorManager) {
+        this.sensorManager = sensorManager;
+        return this;
+    }
+
+    public Sensor getAccSensor() {
+        return accSensor;
+    }
+
+    public Game setAccSensor(Sensor accSensor) {
+        this.accSensor = accSensor;
+        return this;
+    }
+
+    public TextView getPanel_LBL_score() {
+        return panel_LBL_score;
+    }
+
+    public Game setPanel_LBL_score(TextView panel_LBL_score) {
+        this.panel_LBL_score = panel_LBL_score;
+        return this;
+    }
+
+    public LinearLayout getPanel_main_layout() {
+        return panel_main_layout;
+    }
+
+    public Game setPanel_main_layout(LinearLayout panel_main_layout) {
+        this.panel_main_layout = panel_main_layout;
+        return this;
+    }
+
+    public LinearLayout getPanel_lanes() {
+        return panel_lanes;
+    }
+
+    public Game setPanel_lanes(LinearLayout panel_lanes) {
+        this.panel_lanes = panel_lanes;
+        return this;
+    }
+
+    public LinearLayout getPanel_below_layout() {
+        return panel_below_layout;
+    }
+
+    public Game setPanel_below_layout(LinearLayout panel_below_layout) {
+        this.panel_below_layout = panel_below_layout;
+        return this;
+    }
+
+    public ArrayList<ImageView> getArrOfSpaceShip() {
+        return arrOfSpaceShip;
+    }
+
+    public Game setArrOfSpaceShip(ArrayList<ImageView> arrOfSpaceShip) {
+        this.arrOfSpaceShip = arrOfSpaceShip;
+        return this;
+    }
+
+    public ArrayList<LinearLayout> getArrOfLayout() {
+        return arrOfLayout;
+    }
+
+    public Game setArrOfLayout(ArrayList<LinearLayout> arrOfLayout) {
+        this.arrOfLayout = arrOfLayout;
+        return this;
+    }
+
+    public ImageView[][] getMatOfAlien() {
+        return matOfAlien;
+    }
+
+    public Game setMatOfAlien(ImageView[][] matOfAlien) {
+        this.matOfAlien = matOfAlien;
+        return this;
+    }
+
+    public randomImageView[] getArrOfImageView() {
+        return arrOfImageView;
+    }
+
+    public Game setArrOfImageView(randomImageView[] arrOfImageView) {
+        this.arrOfImageView = arrOfImageView;
+        return this;
+    }
+
+    public ImageView[] getArrOfLife() {
+        return arrOfLife;
+    }
+
+    public Game setArrOfLife(ImageView[] arrOfLife) {
+        this.arrOfLife = arrOfLife;
+        return this;
+    }
+
+    public boolean isNeedToGen() {
+        return needToGen;
+    }
+
+    public Game setNeedToGen(boolean needToGen) {
+        this.needToGen = needToGen;
+        return this;
+    }
+
+    public boolean isNeedToSpeedUp() {
+        return needToSpeedUp;
+    }
+
+    public Game setNeedToSpeedUp(boolean needToSpeedUp) {
+        this.needToSpeedUp = needToSpeedUp;
+        return this;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public Game setTimer(Timer timer) {
+        this.timer = timer;
+        return this;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public Game setLives(int lives) {
+        this.lives = lives;
+        return this;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public Game setScore(int score) {
+        this.score = score;
+        return this;
+    }
+
+    public int getCurPos() {
+        return curPos;
+    }
+
+    public Game setCurPos(int curPos) {
+        this.curPos = curPos;
+        return this;
+    }
+
+    public int getInsertToArrOfImageView() {
+        return insertToArrOfImageView;
+    }
+
+    public Game setInsertToArrOfImageView(int insertToArrOfImageView) {
+        this.insertToArrOfImageView = insertToArrOfImageView;
+        return this;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public Game setTime(int time) {
+        this.time = time;
+        return this;
+    }
+
+    public int getGenBonus() {
+        return genBonus;
+    }
+
+    public Game setGenBonus(int genBonus) {
+        this.genBonus = genBonus;
+        return this;
+    }
+
+    public int getChoose() {
+        return choose;
+    }
+
+    public Game setChoose(int choose) {
+        this.choose = choose;
+        return this;
+    }
+
+    public int getNUM_OF_LANES() {
+        return NUM_OF_LANES;
+    }
+
+    public int getMAX_TO_ARRIVE() {
+        return MAX_TO_ARRIVE;
+    }
+
+    public randomImageView getRa() {
+        return ra;
+    }
+
+    public Game setRa(randomImageView ra) {
+        this.ra = ra;
+        return this;
+    }
+
+    public float getCurX() {
+        return curX;
+    }
+
+    public Game setCurX(float curX) {
+        this.curX = curX;
+        return this;
+    }
+
+    public float getCurY() {
+        return curY;
+    }
+
+    public Game setCurY(float curY) {
+        this.curY = curY;
+        return this;
+    }
+
+    public float getCurZ() {
+        return curZ;
+    }
+
+    public Game setCurZ(float curZ) {
+        this.curZ = curZ;
+        return this;
+    }
+
+    public boolean getFirstTimeEnter() {
+        return firstTimeEnter;
+    }
+
+    public Game setFirstTimeEnter(boolean firstTimeEnter) {
+        this.firstTimeEnter = firstTimeEnter;
+        return this;
+    }
+
+    public LinearLayout.LayoutParams getLinearlayoutParam() {
+        return linearlayoutParam;
+    }
+
+    public Game setLinearlayoutParam(LinearLayout.LayoutParams linearlayoutParam) {
+        this.linearlayoutParam = linearlayoutParam;
+        return this;
+    }
+
+    public void insertImageView() {
+        for (int i = 0; i < NUM_OF_LANES; i++) {
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams
+                    (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            ImageView spaceShip = new ImageView(context);
+            spaceShip.setId(i);//check this
+            spaceShip.setLayoutParams(new LinearLayout.LayoutParams(500, 500));
+            spaceShip.setImageResource(R.drawable.img_spaceship);
+            if (i != 2) {
+                spaceShip.setVisibility(View.INVISIBLE);
+            }
+            arrOfSpaceShip.add(spaceShip);
+            LinearLayout linearLayout1 = new LinearLayout(context);
+            linearLayout1.setOrientation(LinearLayout.VERTICAL);
+            linearLayout1.setId(i);
+            linearlayoutParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            linearlayoutParam.weight = 1;
+            linearLayout1.setGravity(Gravity.CENTER);
+            linearLayout1.setLayoutParams(linearlayoutParam);
+            insertAlienAndBonus(i, linearLayout1);
+            // insertAlienAndBonus(i,linearLayout1);
+            lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            arrOfLayout.add(linearLayout1);
+            arrOfLayout.get(i).addView(spaceShip, lp);
+            panel_lanes.addView(linearLayout1);
+
+        }
+    }
+
+    private void insertAlienAndBonus(int i, LinearLayout linearLayout1) {
+        for (int j = 0; j < MAX_TO_ARRIVE; j++) {
+            ImageView imageView = new ImageView(context);
+            imageView.setId(i);
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(180, 180)); // value is in pixels
+            matOfAlien[j][i] = imageView;
+            linearLayout1.addView(imageView);
+        }
+    }
+
+    public void gen() {
+        if (needToGen) {
+            needToGen = false;
+            int max = 4, min = 0, lane = new Random().nextInt((max - min) + 1) + min;
+            max = 1;
+            genBonus = new Random().nextInt((max - min) + 1) + min;
+            if (genBonus == 0) { //then gen an alien
+                if (insertToArrOfImageView == NUM_OF_LANES + 1) {
+                    insertToArrOfImageView = 0;
+                }
+                arrOfImageView[insertToArrOfImageView] = new randomImageView(0, lane, "alien");
+                ra = arrOfImageView[insertToArrOfImageView];
+                matOfAlien[ra.getLine()][ra.getRow()].setImageResource(R.drawable.img_alien);
+                matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
+                insertToArrOfImageView++;
+            } else { // need to gen a bonus
+                if (insertToArrOfImageView == NUM_OF_LANES + 1) {
+                    insertToArrOfImageView = 0;
+                }
+                arrOfImageView[insertToArrOfImageView] = new randomImageView(0, lane, "star");
+                ra = arrOfImageView[insertToArrOfImageView];
+                matOfAlien[ra.getLine()][ra.getRow()].setImageResource(R.drawable.img_star);
+                matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
+                // matOfBonus[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
+                insertToArrOfImageView++;
+            }
+        } else {
+            needToGen = true;
+        }
+        moveObj();
+    }
+
+    private void moveObj() {
+        for (int i = 0; i < NUM_OF_LANES + 1; i++) {
+            int num = 0;
+            moveAlienAndStarDown(i, num);
+        }
+        score += 10;
+        panel_LBL_score.setText("" + score);
+
+    }
+
+    private void moveAlienAndStarDown(int i, int num) {
+        if (arrOfImageView[i] != null) {
+            String type = arrOfImageView[i].getSource();//alien or star
+            if (i != insertToArrOfImageView - 1 || needToGen) {
+                if (arrOfImageView[i].getLine() >= MAX_TO_ARRIVE) {
+                    num = 5;
+                } else {
+                    num = arrOfImageView[i].getLine();
+                }
+
+                matOfAlien[num][arrOfImageView[i].getRow()].setVisibility(View.INVISIBLE);
+                arrOfImageView[i].addLine();
+                if (arrOfImageView[i].getRow() == curPos && arrOfImageView[i].getLine() == MAX_TO_ARRIVE) {
+                    if (type.equals("alien")) {
+                        lives--;
+                        updateLivesViews();
+                    } else if (type.equals("star")) {
+                        score = score + 100;
+                        panel_LBL_score.setText("" + score);
+                        if ((score + 1000) % 1000 == 0 && needToSpeedUp) {
+                            time = time - 100;
+                            needToSpeedUp = false;
+                        }
+                    }
+                }
+            }
+            if (arrOfImageView[i].getLine() < MAX_TO_ARRIVE) {
+                if (type.equals("alien")) {
+                    matOfAlien[arrOfImageView[i].getLine()][arrOfImageView[i].getRow()].setImageResource(R.drawable.img_alien);
+                } else if (type.equals("star")) {
+                    matOfAlien[arrOfImageView[i].getLine()][arrOfImageView[i].getRow()].setImageResource(R.drawable.img_star);
+                }
+                matOfAlien[arrOfImageView[i].getLine()][arrOfImageView[i].getRow()].setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void updateLivesViews() {
+        if (lives == 0) {
+            //then exit and save the score not recaycle
+            //open the view of top ten and map
+            arrOfLife[0].setVisibility(View.VISIBLE);
+            arrOfLife[1].setVisibility(View.VISIBLE);
+            arrOfLife[2].setVisibility(View.VISIBLE);
+            //need to save the score and ask the gps + name
+            lives = 3;
+            vibrate();
+        } else
+            arrOfLife[lives].setVisibility(View.INVISIBLE);
+
+    }
+
+    private void vibrate() {
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(500);
+        }
+    }
+
+    private void cancelTheTimer() {
+        timer.cancel();
+    }
+
+    public void stopTicker() {
+        cancelTheTimer();
+    }
+}
