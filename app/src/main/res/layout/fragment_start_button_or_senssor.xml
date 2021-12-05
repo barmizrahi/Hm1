@@ -6,23 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:layout_margin="16dp">
+    android:layout_margin="16dp"
+    android:background="@drawable/background_space1">
 
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/frame1_LBL_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:maxLines="2"
-        android:text="Welcome to my Game!"
-        android:textColor="#2E5BFF"
-        android:textSize="33sp" />
 
 
 
@@ -31,14 +17,13 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/frame1_LBL_title"
-        android:layout_marginTop="150dp"
         android:layout_marginStart="55dp"
+        android:layout_marginTop="150dp"
 
         android:text="button mode"
+        android:textColor="#FF5252"
         android:textSize="30sp"
         app:cornerRadius="100dp"
-        android:textColor="#00BCD4"
         app:strokeColor="@color/black" />
 
     <com.google.android.material.button.MaterialButton
@@ -47,12 +32,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/frame1_BTN_buttonMode"
-        android:layout_marginTop="50dp"
         android:layout_marginStart="55dp"
+        android:layout_marginTop="50dp"
         android:text="Sensor mode"
+        android:textColor="#FF5252"
         android:textSize="30sp"
         app:cornerRadius="100dp"
-        app:strokeColor="@color/black" />
+        app:strokeColor="#0B0A0A" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/frame1_BTN_topTen"
@@ -60,13 +46,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/frame1_BTN_sensorMode"
-        android:layout_marginTop="50dp"
         android:layout_marginStart="55dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="50dp"
         android:text="top-ten record"
+        android:textColor="#FF5252"
         android:textSize="30sp"
         app:cornerRadius="100dp"
-        android:textColor="#ffd700"
         app:strokeColor="@color/black" />
 
 

@@ -3,16 +3,18 @@ package com.example.hm1;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -24,7 +26,9 @@ public class Game {
     private Sensor accSensor;
     private TextView panel_LBL_score;
     private LinearLayout.LayoutParams linearlayoutParam = null;
+    private RelativeLayout panel_Life_Score_layout;
     private LinearLayout panel_main_layout, panel_lanes, panel_below_layout;
+    private FrameLayout frameStart;
     private ArrayList<ImageView> arrOfSpaceShip;
     private ArrayList<LinearLayout> arrOfLayout;
     private ImageView[][] matOfAlien;
@@ -32,23 +36,44 @@ public class Game {
     private randomImageView ra;
     private ImageView[] arrOfLife;
     private Timer timer = new Timer();
-    private boolean needToGen = true, needToSpeedUp = true, firstTimeEnter = true;
-    private int lives = 3, score = 0, curPos = 2, insertToArrOfImageView = 0, time = 1000, genBonus, choose;
+    private boolean needToGen = true, needToSpeedUp = true, firstTimeEnter = true, endGame;
+    private int lives = 3, score = 0, curPos = 2, insertToArrOfImageView = 0, time = 500,curTime = 500, genBonus, choose;
     private final int NUM_OF_LANES = 5;
     private final int MAX_TO_ARRIVE = 6;
     private float curX, curY, curZ;
+    private MainActivity mainActivity;
 
 
-    public Game(Context context) {
+    public Game(Context context, MainActivity mainActivity) {
         this.context = context;
-        arrOfSpaceShip = new ArrayList<>(NUM_OF_LANES);
         arrOfLayout = new ArrayList(NUM_OF_LANES);
+        arrOfSpaceShip = new ArrayList<>(NUM_OF_LANES);
         arrOfImageView = new randomImageView[NUM_OF_LANES + 1];
         matOfAlien = new ImageView[MAX_TO_ARRIVE][NUM_OF_LANES];
+        endGame = true;
+        this.mainActivity = mainActivity;
     }
 
     public Context getContext() {
         return context;
+    }
+
+    public FrameLayout getFrameStart() {
+        return frameStart;
+    }
+
+    public Game setFrameStart(FrameLayout frameStart) {
+        this.frameStart = frameStart;
+        return this;
+    }
+
+    public RelativeLayout getPanel_Life_Score_layout() {
+        return panel_Life_Score_layout;
+    }
+
+    public Game setPanel_Life_Score_layout(RelativeLayout panel_Life_Score_layout) {
+        this.panel_Life_Score_layout = panel_Life_Score_layout;
+        return this;
     }
 
     public Game setContext(Context context) {
@@ -365,39 +390,42 @@ public class Game {
     }
 
     public void gen() {
-        if (needToGen) {
-            needToGen = false;
-            int max = 4, min = 0, lane = new Random().nextInt((max - min) + 1) + min;
-            max = 1;
-            genBonus = new Random().nextInt((max - min) + 1) + min;
-            if (genBonus == 0) { //then gen an alien
-                if (insertToArrOfImageView == NUM_OF_LANES + 1) {
-                    insertToArrOfImageView = 0;
+        Log.i("here" , ""+time);
+        if (endGame) {
+            if (needToGen) {
+                needToGen = false;
+                int max = 4, min = 0, lane = new Random().nextInt((max - min) + 1) + min;
+                max = 1;
+                genBonus = new Random().nextInt((max - min) + 1) + min;
+                if (genBonus == 0) { //then gen an alien
+                    if (insertToArrOfImageView == NUM_OF_LANES + 1) {
+                        insertToArrOfImageView = 0;
+                    }
+                    arrOfImageView[insertToArrOfImageView] = new randomImageView(0, lane, "alien");
+                    ra = arrOfImageView[insertToArrOfImageView];
+                    matOfAlien[ra.getLine()][ra.getRow()].setImageResource(R.drawable.img_alien);
+                    matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
+                    insertToArrOfImageView++;
+                } else { // need to gen a bonus
+                    if (insertToArrOfImageView == NUM_OF_LANES + 1) {
+                        insertToArrOfImageView = 0;
+                    }
+                    arrOfImageView[insertToArrOfImageView] = new randomImageView(0, lane, "star");
+                    ra = arrOfImageView[insertToArrOfImageView];
+                    matOfAlien[ra.getLine()][ra.getRow()].setImageResource(R.drawable.img_star);
+                    matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
+                    // matOfBonus[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
+                    insertToArrOfImageView++;
                 }
-                arrOfImageView[insertToArrOfImageView] = new randomImageView(0, lane, "alien");
-                ra = arrOfImageView[insertToArrOfImageView];
-                matOfAlien[ra.getLine()][ra.getRow()].setImageResource(R.drawable.img_alien);
-                matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
-                insertToArrOfImageView++;
-            } else { // need to gen a bonus
-                if (insertToArrOfImageView == NUM_OF_LANES + 1) {
-                    insertToArrOfImageView = 0;
-                }
-                arrOfImageView[insertToArrOfImageView] = new randomImageView(0, lane, "star");
-                ra = arrOfImageView[insertToArrOfImageView];
-                matOfAlien[ra.getLine()][ra.getRow()].setImageResource(R.drawable.img_star);
-                matOfAlien[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
-                // matOfBonus[ra.getLine()][ra.getRow()].setVisibility(View.VISIBLE);
-                insertToArrOfImageView++;
+            } else {
+                needToGen = true;
             }
-        } else {
-            needToGen = true;
+            moveObj();
         }
-        moveObj();
     }
 
     private void moveObj() {
-        for (int i = 0; i < NUM_OF_LANES + 1; i++) {
+        for (int i = 0; i < MAX_TO_ARRIVE; i++) {
             int num = 0;
             moveAlienAndStarDown(i, num);
         }
@@ -414,10 +442,11 @@ public class Game {
                     num = 5;
                 } else {
                     num = arrOfImageView[i].getLine();
-                }
 
-                matOfAlien[num][arrOfImageView[i].getRow()].setVisibility(View.INVISIBLE);
+                }
                 arrOfImageView[i].addLine();
+                matOfAlien[num][arrOfImageView[i].getRow()].setVisibility(View.INVISIBLE);
+                Log.d("line", "" + arrOfImageView[i].getLine() + " " + curPos);
                 if (arrOfImageView[i].getRow() == curPos && arrOfImageView[i].getLine() == MAX_TO_ARRIVE) {
                     if (type.equals("alien")) {
                         lives--;
@@ -426,8 +455,12 @@ public class Game {
                         score = score + 100;
                         panel_LBL_score.setText("" + score);
                         if ((score + 1000) % 1000 == 0 && needToSpeedUp) {
-                            time = time - 100;
-                            needToSpeedUp = false;
+                            Log.i("time" , ""+time);
+                            if(time>100) {
+                                time = time - 100;
+                                curTime = time;
+                                needToSpeedUp = false;
+                            }
                         }
                     }
                 }
@@ -441,21 +474,49 @@ public class Game {
                 matOfAlien[arrOfImageView[i].getLine()][arrOfImageView[i].getRow()].setVisibility(View.VISIBLE);
             }
         }
+        Log.i("here1" , ""+time);
     }
 
     private void updateLivesViews() {
+        if(lives>0) {
+            MediaPlayer ring = MediaPlayer.create(context, R.raw.crash_sound);
+            ring.start();
+        }
+        arrOfLife[lives].setVisibility(View.INVISIBLE);
         if (lives == 0) {
-            //then exit and save the score not recaycle
-            //open the view of top ten and map
-            arrOfLife[0].setVisibility(View.VISIBLE);
-            arrOfLife[1].setVisibility(View.VISIBLE);
-            arrOfLife[2].setVisibility(View.VISIBLE);
-            //need to save the score and ask the gps + name
-            lives = 3;
+            MediaPlayer ring = MediaPlayer.create(context, R.raw.end_game_sound);
+            ring.start();
+            stopTheGame();
             vibrate();
-        } else
-            arrOfLife[lives].setVisibility(View.INVISIBLE);
+        }
+    }
 
+    public void moveTheSpaceShip(int pos) {
+        for (int i = 0; i < NUM_OF_LANES; i++) {
+            if (i != pos) {
+                getArrOfSpaceShip().get(i).setVisibility(View.INVISIBLE);
+            } else
+                getArrOfSpaceShip().get(i).setVisibility(View.VISIBLE);
+        }
+        setCurPos(pos);
+    }
+
+    private void stopTheGame() {
+
+        // game.getPanel_Life_Score_layout().setVisibility(View.GONE);
+        getPanel_lanes().setVisibility(View.GONE);
+        endGame = false;
+        if (getChoose() == 0) {//press
+            getPanel_below_layout().setVisibility(View.GONE);
+            getPanel_IMG_right().setVisibility(View.GONE);
+            getPanel_IMG_left().setVisibility(View.GONE);
+        }
+        if (getChoose() == 1) {//sensor
+
+        }
+        //get user name
+        mainActivity.endGame();
+        stopTicker();
     }
 
     private void vibrate() {
@@ -473,5 +534,23 @@ public class Game {
 
     public void stopTicker() {
         cancelTheTimer();
+    }
+
+    public boolean getEndGame() {
+        return endGame;
+    }
+
+    public void speedUp(float y) {
+        if(y<curY){
+           // Log.i("bb","time "+time);
+            if(time>0) {
+                time = time - 10;
+               // Log.i("here" , ""+time);
+            }
+
+        }
+        else {
+            time = curTime;
+        }
     }
 }

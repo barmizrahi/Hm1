@@ -39,7 +39,7 @@ public class Fragment_start extends Fragment {
         frame1_BTN_buttonMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(callBack_Start!=null){
+                if (callBack_Start != null) {
                     callBack_Start.gameWithButton();
                 }
             }
@@ -48,7 +48,7 @@ public class Fragment_start extends Fragment {
         frame1_BTN_sensorMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(callBack_Start!=null){
+                if (callBack_Start != null) {
                     callBack_Start.gameWithSensor();
                 }
             }
@@ -57,7 +57,7 @@ public class Fragment_start extends Fragment {
         frame1_BTN_topTen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(callBack_Start!=null){
+                if (callBack_Start != null) {
                     callBack_Start.showTopTen();
                 }
             }

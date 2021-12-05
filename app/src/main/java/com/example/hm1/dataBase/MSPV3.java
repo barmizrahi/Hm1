@@ -1,4 +1,4 @@
-package com.example.hm1;
+package com.example.hm1.dataBase;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 public class MSPV3 {
 
     private final String SP_FILE = "SP_FILE";
-
-
-
     private static MSPV3 me;
     private SharedPreferences sharedPreferences;
 
@@ -18,29 +15,13 @@ public class MSPV3 {
 
     private MSPV3(Context context) {
         sharedPreferences = context.getApplicationContext().getSharedPreferences(SP_FILE, Context.MODE_PRIVATE);
+
     }
 
-    public static MSPV3 initHelper(Context context) {
+    public static void initHelper(Context context) {
         if (me == null) {
             me = new MSPV3(context);
         }
-        return me;
-    }
-
-
-
-
-
-
-
-
-
-    public void putDouble(String KEY, double defValue) {
-        putString(KEY, String.valueOf(defValue));
-    }
-
-    public double getDouble(String KEY, double defValue) {
-        return Double.parseDouble(getString(KEY, String.valueOf(defValue)));
     }
 
     public int getInt(String KEY, int defValue) {
@@ -55,7 +36,11 @@ public class MSPV3 {
         return sharedPreferences.getString(KEY, defValue);
     }
 
-    public void putString(String KEY, String value) {
-        sharedPreferences.edit().putString(KEY, value).apply();
+    public void putString(String KEY, String defValue) {
+        sharedPreferences.edit().putString(KEY, defValue).apply();
+    }
+
+    public void Delete(String key){
+        sharedPreferences.edit().remove(key).commit();
     }
 }

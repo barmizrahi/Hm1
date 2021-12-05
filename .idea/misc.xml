@@ -3,10 +3,21 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/activity_main.xml" value="0.12" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/drawable/ic_launcher_background.xml" value="0.24166666666666667" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/activity_save_score.xml" value="0.2" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/activity_splash.xml" value="0.10625" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/fragment_first.xml" value="0.178125" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/fragment_list_of_players.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/fragment_map.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/fragment_start_button_or_senssor.xml" value="0.2" />
+        <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/fragment_top_ten_and_map.xml" value="0.264" />
         <entry key="..\:/Users/barm4/AndroidStudioProjects/Hm1/app/src/main/res/layout/start_button_or_senssor.xml" value="0.2" />
       </map>
     </option>
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_top_ten_and_map1.xml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
