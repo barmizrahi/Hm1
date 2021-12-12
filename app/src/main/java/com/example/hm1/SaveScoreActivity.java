@@ -67,4 +67,11 @@ public class SaveScoreActivity extends AppCompatActivity {
         startActivity(myIntent);
         super.finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+
+    }
 }

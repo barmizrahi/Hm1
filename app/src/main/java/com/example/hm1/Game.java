@@ -390,7 +390,7 @@ public class Game {
     }
 
     public void gen() {
-        Log.i("here" , ""+time);
+        //Log.i("here" , ""+time);
         if (endGame) {
             if (needToGen) {
                 needToGen = false;
@@ -474,7 +474,7 @@ public class Game {
                 matOfAlien[arrOfImageView[i].getLine()][arrOfImageView[i].getRow()].setVisibility(View.VISIBLE);
             }
         }
-        Log.i("here1" , ""+time);
+       // Log.i("here1" , ""+time);
     }
 
     private void updateLivesViews() {
@@ -540,17 +540,4 @@ public class Game {
         return endGame;
     }
 
-    public void speedUp(float y) {
-        if(y<curY){
-           // Log.i("bb","time "+time);
-            if(time>0) {
-                time = time - 10;
-               // Log.i("here" , ""+time);
-            }
-
-        }
-        else {
-            time = curTime;
-        }
-    }
 }

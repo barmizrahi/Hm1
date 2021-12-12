@@ -20,8 +20,8 @@ public class Activity_Splash extends AppCompatActivity {
 
     private static final String TAG = Activity_Splash.class.getSimpleName();
 
-    final int ANIM_DURATION = 4400;
-
+    final int ANIM_DURATION = 6000;
+    private  MediaPlayer ring;
     private ImageView splash_IMG_logo;
 
     @Override
@@ -29,6 +29,8 @@ public class Activity_Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        ring = MediaPlayer.create(this, R.raw.theme_open_sound);
+        ring.start();
         findViews();
 
         splash_IMG_logo.setVisibility(View.INVISIBLE);
@@ -57,6 +59,7 @@ public class Activity_Splash extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        ring.stop();
                         animationDone();
                     }
 
@@ -79,13 +82,26 @@ public class Activity_Splash extends AppCompatActivity {
     private void openHomeActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        MediaPlayer ring = MediaPlayer.create(this, R.raw.crash_sound);
-        ring.start();
         startActivity(intent);
         finish();
     }
 
     private void findViews() {
         splash_IMG_logo = findViewById(R.id.splash_IMG_logo);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+
+    }
+
+    @Override
+    public void finish() {
+        Intent myIntent = new Intent(this, MainActivity.class);
+        ring.stop();
+        startActivity(myIntent);
+        super.finish();
     }
 }

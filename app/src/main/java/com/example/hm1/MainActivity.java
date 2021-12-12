@@ -103,16 +103,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startTicker() {
-        timer = new Timer();
+        //timer = new Timer();
         timer.schedule(
                 new TimerTask(){
                     @Override
                     public void run(){
-                        Log.i("bb" , ""+game.getTime());
+                       // Log.i("bb" , ""+game.getTime());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("bb" , ""+game.getTime());
+                                //Log.i("bb" , ""+game.getTime());
                                 game.gen();
                             }
                         });
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
-            if (game.getFirstTimeEnter()) {//need to set the curr values for speed
+            if (game.getFirstTimeEnter()) {
                 game.setCurX(event.values[0]);
                 game.setCurY(event.values[1]);
                 game.setCurZ(event.values[2]);
@@ -224,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
-            //Log.i("sen","now y: "+y+ " start y: " + game.getCurY()+" time " + game.getTime());
-            game.speedUp(y);
             if (x > 7 && x <= 9) {//the 0 posion is on
                 game.moveTheSpaceShip(0);
             }
@@ -322,5 +320,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        timer.cancel();
+        Intent intent=new Intent();
+        intent.setClass(this,MainActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        overridePendingTransition(0, 0);
+        this.finish();
+
     }
 }
